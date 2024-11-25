@@ -1,10 +1,8 @@
+// AVEC LA SOURIS
+
 const audios = document.querySelectorAll("audio");
-const key = document.querySelectorAll(".key");
-const lettres = document.querySelectorAll("kbd");
-  lettres.forEach((lettre) => {
-    lettre.innerHTML;
-    console.log(lettre);
-  });
+// const key = document.querySelectorAll(".key");
+
 // key.forEach((key) => {
 //   key.addEventListener("mousedown", playSound);
 //   key.addEventListener("mouseleave", removeTransition);
@@ -23,43 +21,86 @@ const lettres = document.querySelectorAll("kbd");
 //   event.target.classList.remove("playing");
 // }
 
-key.forEach((key) => {
-  key.addEventListener("keydown", playSound);
-  key.addEventListener("keyup", removeTransition);
-});
+const noteJouer = new Set();
+const noteEnregistrer = [];
+let recording = false;
+let playing = false;
+// AVEC LE KEYBOARD
+document.addEventListener("keydown", playSound);
+document.addEventListener("keyup", removeTransition);
 
 function playSound(event) {
-  const keyValue = this.dataset.key;
+  // if(noteEnregistrer[0]) {
+  //   const {keyCode, timeCode} = noteEnregistrer[0];
+  //   console.log(timeCode);
+    
+  // }
+
+  const key = document.querySelector(`.key[data-key="${event.keyCode}"]`);
+  if (!key) {
+    return;
+  }
+
+  if (noteJouer.has(key)) {
+    return;
+  }
+  noteJouer.add(key);
+
+  const keyValue = key.dataset.key;
   const audio = [...audios].find((audio) => audio.dataset.key === keyValue);
-  
+
   if (audio) {
     audio.currentTime = 0;
     audio.play();
-    event.target.classList.add("playing");
+    key.classList.toggle("playing");
   }
+
+  if (recording === true) {
+    noteEnregistrer.push({
+      keyCode: event.keyCode,
+      timeCode: Date.now(),
+    });
+  }
+  // console.log(noteEnregistrer);
+  
+  
+  // noteJouer.push(event);
 }
 function removeTransition(event) {
-  event.target.classList.remove("playing");
+  const key = document.querySelector(`.key[data-key="${event.keyCode}"]`);
+  if (!key) {
+    return;
+  }
+  noteJouer.delete(key);
+  key.classList.toggle("playing");
 }
 
-// let record = document.querySelector('#record');
-// let play = document.querySelector('#play');
-// record.addEventListener("click", handleRecord);
+//RECORD ET PLAY §§
 
-// function handleRecord(){
-//     console.log('fff');
+let record = document.querySelector("#record");
+let play = document.querySelector("#play");
+record.addEventListener("click", handleRecord);
+play.addEventListener("click", handlePlay);
 
+function handleRecord() {
+  record.classList.toggle("playing");
+  recording = !recording;
+  console.log("recording : " + recording);
+}
+
+
+// function handlePlay(){
+//   play.classList.toggle("playing");
+//   playing = !playing;
+//   // for(let i =0; i<noteEnregistrer.length; i++){
+//   //   noteEnregistrer;
+//   // }
+//   if (noteEnregistrer>0) {
+//     // audio.currentTime = 0;
+//     noteEnregistrer.play();
+//     key.classList.toggle("playing");
+//   }
 // }
 
-// function beatBox() {
-//   function simulateKey(e) {
-//     // simule la pression d'une touche de clavier
-//     // Pour simuler la pression d'une touche, je veux créer et paramétrer un nouvel event js
-//     // ensuite je veux dispatch cet event dans le document
-//   }
-//   function playBeat() {
-//     // renvoie une nouvelle promesse
-//   }
-// //   une chaîne de promesse pour créer un beat
-// }
-// faireQqc().then(successCallback, failureCallback);
+
+
