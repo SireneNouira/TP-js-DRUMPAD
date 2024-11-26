@@ -78,7 +78,7 @@ function handlePlayAsync() {
     noteEnregistrer.forEach((element) => {
 
 
-      tempsTotal += element.interval;
+      tempsTotal = element.interval;
 
       setTimeout(() => {
         play.classList.add("playing");
@@ -102,15 +102,15 @@ function handlePlayAsync() {
 
     });
 setTimeout(() => {
-     resolve();
-    }, tempsTotal);
+     resolve(play.classList.remove("playing"));
+    }, tempsTotal + 300);
   
-promesse.then(() => {
-    play.classList.remove("playing");
-  });
+// promesse.then(() => {
+//     play.classList.remove("playing");
+//   });
     
-  reject;
-promesse.catch();
+ 
+// promesse.catch();
   });
 
 }
