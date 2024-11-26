@@ -10,7 +10,6 @@ document.addEventListener("keydown", playSound);
 document.addEventListener("keyup", removeTransition);
 
 function playSound(event) {
-  
   // if(noteEnregistrer[0]) {
   //   const {keyCode, timeCode} = noteEnregistrer[0];
   //   console.log(timeCode);
@@ -39,7 +38,6 @@ function playSound(event) {
   if (recording === true) {
     timeCode.push(Date.now());
     let premiereTemps = timeCode[0];
-
     timeCode.forEach((temps) => {
       interval = temps - premiereTemps;
     });
@@ -73,24 +71,48 @@ function handleRecord() {
 }
 
 function handlePlayAsync() {
-  noteEnregistrer.forEach((element) => {
-    setTimeout(() => {
-      
-      const keyboardEvent = new KeyboardEvent("keydown", {keyCode: element.keyCode});
-      const keyboardEvent2 = new KeyboardEvent("keyup", {keyCode: element.keyCode});
-      document.dispatchEvent(keyboardEvent);
+  const promesse = new Promise((resolve, reject) => {
+
+    let tempsTotal = 0;
+
+    noteEnregistrer.forEach((element) => {
+
+
+      tempsTotal += element.interval;
+
       setTimeout(() => {
-        document.dispatchEvent(keyboardEvent2);
-      }, 300)
-    }, element.interval);
-  });
-    play.classList.toggle("playing");
-    playing = !playing;
+        play.classList.add("playing");
+
+        const keyboardEvent = new KeyboardEvent("keydown", {
+          keyCode: element.keyCode,
+        });
+        const keyboardEvent2 = new KeyboardEvent("keyup", {
+          keyCode: element.keyCode,
+        });
+        document.dispatchEvent(keyboardEvent);
+
+
+
+        setTimeout(() => {
+          document.dispatchEvent(keyboardEvent2);
+        }, 300);
+
+      }, element.interval);
+
+
+    });
+setTimeout(() => {
+     resolve();
+    }, tempsTotal);
   
+promesse.then(() => {
+    play.classList.remove("playing");
+  });
+    
+  reject;
+promesse.catch();
+  });
 
-  // const promesse = new Promise((resolve, reject) => {
-
-  // })
 }
 
 // function handlePlay() {
